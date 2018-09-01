@@ -1,0 +1,47 @@
+metadata:
+  access_right: open
+  license: CC-BY-4.0
+  publication_type: article
+  upload_type: publication
+pipelines:
+  buildEnv:
+    envs:
+    - host
+    path: scripts/buildEnv
+    stages:
+    - install-sciunit.sh
+  refreshData:
+    envs:
+    - host
+    path: scripts/refreshData
+    stages:
+    - run.sh
+  executeModel:
+    envs:
+    - host
+    path: scripts/executeModel
+    stages:
+    - setup.sh
+    - run.sh
+    - evaluate.sh
+    - archive.sh
+  repeatPreprocess:
+    envs:
+    - host
+    path: scripts/repeat
+    stages:
+    - setup.sh
+  repeatModel:
+    envs:
+    - host
+    path: scripts/repeat
+    stages:
+    - run.sh
+  repeatEvaluation:
+    envs:
+    - host
+    path: scripts/repeat
+    stages:
+    - evaluate.sh
+popperized:
+- github/popperized
