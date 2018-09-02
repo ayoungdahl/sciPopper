@@ -1,74 +1,46 @@
-Food Inspections Evaluation
-============================
+Sciunit as Part of Popperized Workflow
+======================================
 
-This is our model for predicting which food establishments are at most risk for the types of violations most likely to spread food-borne illness. Chicago Department of Public Health staff use these predictions to prioritize inspections. During a two month pilot period, we found that that using these predictions meant that inspectors found critical violations much faster.
+This is our example of how [Sciunit](https://sciunit.run) may be used as part of a ["Popperized"](http://falsifiable.us) scientific workflow.
 
-You can help improve the health of our city by improving this model. This repository contains a training and test set, along with the data used in the current model. 
+An important characteristic of such a flow is that all the computations are both transparent to and reproducible by a reviewer.  While such notions of transparency and reproducibility are defining and cherished attributes of the scientific endeavor, they have often proven difficult to achieve in computational settings.
 
-Feel free to clone, fork, send pull requests and to file bugs. 
-Please note that we will need you to agree to our Contributor License Agreement (CLA) in order to be able to use any pull requests.
+Employing Sciunit as part of the Popper convention can help both authors and reviewers of science publications understand and reproduce the computations performed in the production of a publication. 
 
+How can Sciunit help?
+---------------------
 
-Original Analysis and Reports
------------------------------
-In an effort to reduce the public’s exposure to foodborne illness the [City of Chicago](https://github.com/Chicago) partnered with Allstate’s Quantitative Research & Analytics department to develop a predictive model to help prioritize the city's food inspection staff.  This Github project is a complete working evaluation of the model including the data that was used in the model, the code that was used to produce the statistical results, the evaluation of the validity of the results, and documentation of our methodology.
+Two major hurdles which exist when attempting to reproduce a previously done computation in a different environment are:
+1. Ensuring the installation of all the needed binaries and packages at the correct versions while negotiating any arising conflicts.
+2. Ensuring that the inputs to the reproduced computation are identical to the original.
 
-The model evaluation calculates individualized risk scores for more than ten thousand Chicagoland food establishments using publically available data, most of which is updated nightly on [Chicago’s data portal](https://data.cityofchicago.org/). The sole exception is information about the inspectors.
+While there are techniques and tools which can be employed to address these challenges, it is often the case that an author or reviewer may encounter difficulty in predicting and understanding all the dependencies which must be captured and/or provided.  Additionally, tools and techniques often have a learning curve for both author and reviewer.
 
-The evaluation compares two months of Chicago’s Department of Public Health inspections to an alternative data driven approach based on the model. The two month evaluation period is a completely out of sample evaluation based on a model created using test and training data sets from prior time periods.
+Sciunit provides simple automatic capture of all needed binaries and inputs for a particular execution as well as simple re-execution of the original computation on a different system.  These capabilities can be well utilized in the production of a transparent and reproducible scientific workflow.   
 
-The reports may be reproduced compiling the knitr documents present in ``./REPORTS``.
+As a demonstration we've borrowed a predictive model from https://chicago.github.io/food-inspections-evaluation/ and integrated it with Sciunit into a workflow which follows the Popper convention.
 
-REQUIREMENTS
-------------
+Pre-Requisites
+--------------
 
-All of the code in this project uses the open source statistical application, R.  We advise that you use ```R version >= 3.1``` for best results. 
+The execution of this flow requires a linux system with Python 2.7 and a pip installer refereable to as "pip2" which will install packages for your Python 2.7 environment.
 
-Ubuntu users may need to install `libssl-dev`, `libcurl4-gnutls-dev`, and `libxml2-dev`.  This can be accomplished by typing the following command at the command line:
-`sudo apt-get install libssl-dev libcurl4-gnutls-dev libxml2-dev`
+Installing the [PopperCLI](https://github.com/systemslab/popper) is optional, but makes for easier execution.
 
-The code makes extensive usage of the ``data.table`` package. If you are not familiar with the package, you might want to consult the data.table [FAQ available on CRAN] (http://cran.r-project.org/web/packages/data.table/vignettes/datatable-faq.pdf).
+Demonstation through the FIE Model
+----------------------------------
 
+The FIE ([food inspection evaluation](https://chicago.github.io/food-inspections-evaluation/)) model is a predictive model coded in R consisting of a preprocessing stage, the predictive model itself, and then an evaluation phase.  Knitr is utilized to transform the model outputs into publishable material.
 
-FILE LAYOUT
-------
+Our Popperized workflow is set up such that a reviewer may execute a sequence of steps to perform repeat executions of the steps taken by the original author.  The repeat executions can be run without the need to reproduce the author's original environment.
 
-The following directory structure is used:
+<need to link "repeat ex" to exec step clearly>
+First, if PopperCLI is installed, build the Sciunit environment by executing **popper run buildEnv** from the cloned repository directory.
+If PopperCLI is not installed this can be run by executing **scripts/buildEnv/install-sciunit.sh**.  The layout of the project can be inferred from **.popper.yml**.
 
-DIRECTORY           | DESCRIPTION
---------------------|----------------------
-`.`                 | Project files such as README and LICENSE
-`./CODE/`           | Sequential scripts used to develop model
-`./CODE/functions/` | General function definitions, which could be used in any script
-`./DATA/`           | Data files created by scripts in `./CODE/`, or static
-`./REPORTS/`        | Reports and other output are located in 
+Once the Sciunit environment has been established a reviewer can perform a repeat run of the preprocessing, model execution, or evaluation steps by executing **popper run repeatPreprocess**, **popper run repeatModel**, and **popper run repeatEvaluation**.  These executions can be replayed in any order and multiple times, if desired, as Sciunit has captured the correct versions of inputs to every step.  If PopperCLI is not being used the necessary script executions can be derived by combining the path and stages tags from the pipelines specified in .popper.yml.
 
-We have included all of the steps used to develop the model, evaluate the results, and document the results in the above directory structure.
+If a reviewer would like to see how each of the repeat steps was captured they could review backwards into the **executeModel** stage and from there find reference to the relevent source code if need be.
 
-The scripts located in the `./CODE/` folder are organized sequentially, meaning that the numeric prefix indicates the order in which the script was / should be run in order to reproduce our results.
-
-Although we include all the necessary steps to download and transform the data used in the model, we also have stored a snapshot of the data in the repository.  So, to run the model as it stands, it is only necessary to download the repository, install the dependencies, and step through the code in `CODE/30_glmnet_model.R`.  If you do not already have them, the dependencies can be installed using the startup script `CODE/00_Startup.R`.
-
-DATA
-------
-
-Data used to develop the model is stored in the ``./DATA`` directory. [Chicago’s Open Data Portal](http://data.cityofchicago.org). The following datasets were used in the building the analysis-ready dataset. 
-
-```
-Business Licenses
-Food Inspections 
-Crime
-Garbage Cart Complaints
-Sanitation Complaints
-Weather
-Sanitarian Information
-```
-
-The data sources are joined to create a tabular dataset that paints a statistical picture of a ‘business license’- The primary modelling unit / unit of observation in this project.
-
-The data sources are joined (in SQLesque manner) on appropriate composite keys. These keys include Inspection ID, Business License, and Geography expressed as a Latitude / Longitude combination among others. 
-
-
-Acknowledgements
-----------------
-This research was conducted by the City of Chicago with support from the [Civic Consulting Alliance](http://www.ccachicago.org/), and [Allstate Insurance](https://www.allstate.com/). The City would especially like to thank Stephen Collins, Gavin Smart, Ben Albright, and David Crippin for their efforts in developing the predictive model. We also appreciate the help of Kelsey Burr, Christian Hines, and Kiran Pookote in coordinating this research project. We owe a special thanks to our volunteers from Allstate who put in a tremendous effort to develop the predictive model and allowing their team to volunteer for projects to change their city. This project was partially funded by an award from the Bloomberg Philanthropies' Mayors Challenge.
+<need knitr code>
+<need to adjust FIE scripts to place all package installs into 00 script>
