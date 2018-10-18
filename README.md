@@ -34,7 +34,6 @@ The FIE ([food inspection evaluation](https://chicago.github.io/food-inspections
 
 Our Popperized workflow is set up such that a reviewer may execute a sequence of steps to perform repeat executions of the steps taken by the original author.  The repeat executions can be run without the need to reproduce the author's original environment.
 
-<need to link "repeat ex" to exec step clearly>
 First, if PopperCLI is installed, build the Sciunit environment by executing **popper run buildEnv** from the cloned repository directory.
 If PopperCLI is not installed this can be run by executing **scripts/buildEnv/install-sciunit.sh**.  The layout of the project can be inferred from **.popper.yml**.
 
