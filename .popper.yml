@@ -1,3 +1,4 @@
+version: 1
 metadata:
   access_right: open
   license: CC-BY-4.0
@@ -6,19 +7,22 @@ metadata:
 pipelines:
   buildEnv:
     envs:
-    - host
+      host:
+        args: []
     path: scripts/buildEnv
     stages:
     - install-sciunit.sh
   refreshData:
     envs:
-    - host
+      host:
+        args: []
     path: scripts/refreshData
     stages:
     - run.sh
   executeModel:
     envs:
-    - host
+      host:
+        args: []
     path: scripts/executeModel
     stages:
     - setup.sh
@@ -27,21 +31,25 @@ pipelines:
     - archive.sh
   repeatPreprocess:
     envs:
-    - host
+      host:
+        args: []
     path: scripts/repeat
     stages:
     - setup.sh
   repeatModel:
     envs:
-    - host
+      host:
+        args: []
     path: scripts/repeat
     stages:
     - run.sh
   repeatEvaluation:
     envs:
-    - host
+      host:
+        args: []
     path: scripts/repeat
     stages:
     - evaluate.sh
 popperized:
-- github/popperized
+- popperized
+badge-server-url: http://badges.falsifiable.us
